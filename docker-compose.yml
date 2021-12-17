@@ -13,15 +13,33 @@ services:
     ports:
       - "8090:3000"
     depends_on:
-      - db
+      - nest_db
     environment:
       DATABASE_PASSWORD: 12345678
       DATABASE_NAME: nest_microservice_rmqp
       DATABASE_USER: nest_app_user
-      DATABASE_HOST: db_host
-      DB_URL: mysql://nest_app_user:12345678@db_host:3306/nest_microservice_rmqp
+      DATABASE_HOST: nest_db_container
+      DB_URL: mysql://nest_app_user:12345678@nest_db_container:3306/nest_microservice_rmqp
 
-  db:
+  laravel_microservice_admin_app:
+    build:
+      context: ./laravel-microservice-admin-rmqp
+      dockerfile: Dockerfile
+    container_name: laravel_admin_rmpq
+    volumes:
+      - ./laravel-microservice-admin-rmqp:/usr/src/app
+      - /usr/src/app/vendor
+    ports:
+      - "8000:8000"
+    depends_on:
+      - laravel_db_admin
+    environment:
+      DATABASE_PASSWORD: 12345678
+      DATABASE_NAME: laravel_admin_microservice_rmqp
+      DATABASE_USER: laravel_admin_app_user
+      DATABASE_HOST: laravel_db_host
+
+  nest_db:
     image: mysql:5.7
     restart: always
     environment:
@@ -29,9 +47,21 @@ services:
       MYSQL_DATABASE: nest_microservice_rmqp
       MYSQL_USER: nest_app_user
       MYSQL_PASSWORD: 12345678
-    container_name: db_host
+    container_name: nest_db_container
     ports:
       - "3330:3306"
+  
+  laravel_db_admin:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 12345678
+      MYSQL_DATABASE: laravel_admin_microservice_rmqp
+      MYSQL_USER: laravel_admin_app_user
+      MYSQL_PASSWORD: 12345678
+    container_name: laravel_db_host
+    ports:
+      - "3337:3306"
 
   rabbitmq_v3:
     container_name: "rabbitmq"
