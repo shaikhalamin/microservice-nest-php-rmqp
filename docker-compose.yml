@@ -1,0 +1,44 @@
+version: "3.7"
+
+services:
+  nest_microservice_producer:
+    build:
+      context: ./nest-microservice-rmqp
+      dockerfile: Dockerfile
+    command: yarn dev
+    container_name: nest_rmqp_producer
+    volumes:
+      - ./nest-microservice-rmqp:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - "8090:3000"
+    depends_on:
+      - db
+    environment:
+      DATABASE_PASSWORD: 12345678
+      DATABASE_NAME: nest_microservice_rmqp
+      DATABASE_USER: nest_app_user
+      DATABASE_HOST: db_host
+      DB_URL: mysql://nest_app_user:12345678@db_host:3306/nest_microservice_rmqp
+
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 12345678
+      MYSQL_DATABASE: nest_microservice_rmqp
+      MYSQL_USER: nest_app_user
+      MYSQL_PASSWORD: 12345678
+    container_name: db_host
+    ports:
+      - "3330:3306"
+
+  rabbitmq_v3:
+    container_name: "rabbitmq"
+    image: rabbitmq:3.8-management-alpine
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin
+    ports:
+      - "5672:5672"
+      - "15672:15672"
