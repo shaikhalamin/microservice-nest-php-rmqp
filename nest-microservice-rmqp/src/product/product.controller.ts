@@ -8,6 +8,13 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
+import {
+  Ctx,
+  EventPattern,
+  MessagePattern,
+  Payload,
+  RmqContext,
+} from '@nestjs/microservices';
 import { ApiTags } from '@nestjs/swagger';
 import { ProductDto } from './dto/product.dto';
 import { ProductService } from './product.service';
@@ -33,4 +40,19 @@ export class ProductController {
   async update(@Param('id') id: number, @Body() productDto: ProductDto) {
     return await this.productService.update(id, productDto);
   }
+
+  // @EventPattern('PRODUCT_CREATED')
+  // sum(@Payload() data: ProductDto, @Ctx() context: RmqContext) {
+  //   console.log(
+  //     `data received in microservice with process id ${process.pid}`,
+  //     data,
+  //   );
+
+  //   const channel = context.getChannelRef();
+  //   // console.log('Channel pattern', context.getPattern());
+  //   // console.log('Channel get message', context.getMessage());
+  //   // console.log('Channel get message', channel);
+  //   const originalMsg = context.getMessage();
+  //   //channel.ack(originalMsg);
+  // }
 }
