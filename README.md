@@ -17,4 +17,7 @@ docker-compose run --rm laravel_microservice_admin_app composer require vladimir
 
 docker run --rm -it -p 15672:15672 -p 5672:5672 rabbitmq:3-management
 
+#check symfony container description
+php bin/console config:dump framework messenger
+
 ```
