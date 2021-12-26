@@ -41,18 +41,18 @@ export class ProductController {
     return await this.productService.update(id, productDto);
   }
 
-  // @EventPattern('PRODUCT_CREATED')
-  // sum(@Payload() data: ProductDto, @Ctx() context: RmqContext) {
-  //   console.log(
-  //     `data received in microservice with process id ${process.pid}`,
-  //     data,
-  //   );
+  @EventPattern('PRODUCT_CREATED')
+  sum(@Payload() data: ProductDto, @Ctx() context: RmqContext) {
+    console.log(
+      `data received in microservice with process id ${process.pid}`,
+      data,
+    );
 
-  //   const channel = context.getChannelRef();
-  //   // console.log('Channel pattern', context.getPattern());
-  //   // console.log('Channel get message', context.getMessage());
-  //   // console.log('Channel get message', channel);
-  //   const originalMsg = context.getMessage();
-  //   //channel.ack(originalMsg);
-  // }
+    const channel = context.getChannelRef();
+    // console.log('Channel pattern', context.getPattern());
+    // console.log('Channel get message', context.getMessage());
+    // console.log('Channel get message', channel);
+    const originalMsg = context.getMessage();
+    channel.ack(originalMsg);
+  }
 }

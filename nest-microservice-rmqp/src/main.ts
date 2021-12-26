@@ -36,8 +36,8 @@ async function bootstrap() {
 
   await app.startAllMicroservices();
 
-  await app.listen(3000, () =>
-    console.log(`Server started at port 3000 with process id ${process.pid}`),
+  await app.listen(8888, () =>
+    console.log(`Server started at port 8888 with process id ${process.pid}`),
   );
 }
 bootstrap();
