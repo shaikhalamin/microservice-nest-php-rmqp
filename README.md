@@ -12,6 +12,8 @@ sudo chown -R shaikhalamin laravel-microservice-admin-rmqp/
 docker run --rm -it -p 15672:15672 -p 5672:5672 rabbitmq:3-management
 
 #check symfony container description
-php bin/console config:dump framework messenger
+php bin/console debug:messenger //to see bindings
+php bin/console debug:autowiring messenger //to see autowire
+php bin/console config:dump framework messenger //to see all possible options for messenger yaml
 
 ```

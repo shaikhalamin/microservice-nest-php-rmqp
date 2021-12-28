@@ -2,12 +2,12 @@
 
 namespace App\Messenger;
 
-use App\Message\ProductCreate;
+use App\Message\JobCreated;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface;
 
-class ExternalJsonMessageSerializer implements SerializerInterface
+class JobJsonMessageSerializer implements SerializerInterface
 {
 
     public function decode(array $encodedEnvelope): Envelope
@@ -15,11 +15,13 @@ class ExternalJsonMessageSerializer implements SerializerInterface
 
         $body = $encodedEnvelope['body'];
         $headers = $encodedEnvelope['headers'];
-        if (isset($headers['message_type']) && $headers['message_type']['type'] != 'product') {
-            //throw new UnrecoverableMessageHandlingException("You are not allowed to consume another transport message");
+
+        if (isset($headers['message_type']) && $headers['message_type']['type'] != 'job') {
+            throw new  UnrecoverableMessageHandlingException("You are not allowed to consume another transport message");
         }
+
         $data = json_decode($body, true);
-        $message = new ProductCreate($data);
+        $message = new JobCreated($data);
 
         $stamps = [];
         // if (isset($headers['stamps'])) {
@@ -37,10 +39,10 @@ class ExternalJsonMessageSerializer implements SerializerInterface
         }
 
         return [
-            'body' => json_encode($message->getName()),
+            'body' => json_encode($message->getJobData()),
             'headers' => [
                 'stamps' => [],
-                'message_type' => ['type' => 'product', 'action' => 'created'],
+                'message_type' => ['type' => 'job', 'action' => 'created'],
                 'Content-Type' => 'application/json'
             ],
         ];

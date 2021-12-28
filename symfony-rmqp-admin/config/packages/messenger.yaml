@@ -3,18 +3,27 @@ framework:
     # Uncomment this (and the failed transport below) to send failed messages to this transport for later handling.
     # failure_transport: failed
 
-    # serializer:
-    #   default_serializer: messenger.transport.symfony_serializer
+    serializer:
+      default_serializer: messenger.transport.symfony_serializer
+
+    default_bus: command.bus
+    buses:
+      command.bus: ~
+      event.bus:
+        default_middleware: allow_no_handlers
 
     transports:
-      # https://symfony.com/doc/current/messenger.html#transport-configuration
       async: "%env(MESSENGER_TRANSPORT_DSN)%"
       failed: "doctrine://default?queue_name=failed"
       # sync: 'sync://'
       external_messages:
         dsn: "%env(MESSENGER_TRANSPORT_DSN)%"
         serializer: App\Messenger\ExternalJsonMessageSerializer
+      jobs_transport:
+        dsn: "%env(MESSENGER_TRANSPORT_DSN)%"
+        serializer: App\Messenger\JobJsonMessageSerializer
 
     routing:
       # Route your messages to the transports
       App\Message\ProductCreate: external_messages # Route your messages to the transports
+      App\Message\JobCreated: jobs_transport
